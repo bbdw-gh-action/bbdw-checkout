@@ -8,6 +8,11 @@ on:
         description: Número da issue do incidente
         required: true
         type: string
+      scenario:
+        description: Cenário autorizado
+        type: choice
+        options: [CHK-003, CHK-001]
+        default: CHK-003
 permissions:
   contents: read
 jobs:
@@ -17,18 +22,22 @@ jobs:
       (github.event_name == 'workflow_dispatch' ||
        (github.actor == 'sentry[bot]' && github.event.issue.user.id == 39604003 &&
         contains(github.event.issue.labels.*.name, 'agent:repair') &&
-        contains(github.event.issue.labels.*.name, 'sentry')))
+        contains(github.event.issue.labels.*.name, 'sentry')) ||
+       (vars.PATCHWORK_BOT_ID != '' && format('{0}', github.event.issue.user.id) == vars.PATCHWORK_BOT_ID &&
+        contains(github.event.issue.labels.*.name, 'agent:repair') &&
+        contains(github.event.issue.labels.*.name, 'agent:handoff')))
     permissions:
       contents: write
       issues: read
       pull-requests: write
       copilot-requests: write
     # Patchwork v3: motor e workflow fixados na mesma revisão.
-    uses: bb-dw-26/patchwork/.github/workflows/patchwork.yml@c0afa42ec5188cf27983230b3645b4cfac69e735
+    uses: bb-dw-26/patchwork/.github/workflows/patchwork.yml@62fd23ef06a0af15107b31669b3c1461853f6331
     with:
       issue_number: ${{ format('{0}', github.event.issue.number || inputs.issue_number) }}
-      config_path: .github/patchwork.json
+      config_path: ${{ inputs.scenario == 'CHK-001' && '.github/patchwork-chk001.json' || '.github/patchwork.json' }}
       node_version: '24'
       install_command: npm ci
     secrets:
       SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+      PATCHWORK_APP_PRIVATE_KEY: ${{ secrets.PATCHWORK_APP_PRIVATE_KEY }}

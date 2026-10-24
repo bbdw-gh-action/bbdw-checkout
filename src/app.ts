@@ -3,6 +3,7 @@ import {
   Body,
   Controller,
   Get,
+  Headers,
   Inject,
   Module,
   Post,
@@ -25,8 +26,15 @@ class OrdersController {
   create(
     @Body() body: unknown,
     @Res({ passthrough: true }) response: Response,
+    @Headers("idempotency-key") key?: string,
+    @Headers("x-client-release") clientRelease?: string,
   ) {
-    return this.orders.create(body, String(response.getHeader("X-Request-ID")));
+    return this.orders.create(
+      body,
+      String(response.getHeader("X-Request-ID")),
+      key,
+      clientRelease,
+    );
   }
 }
 

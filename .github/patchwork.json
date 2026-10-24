@@ -1,6 +1,6 @@
 {
   "repository": "bb-dw-26/bbdw-checkout",
-  "baseBranch": "demo/chk-001",
+  "baseBranch": "main",
   "runtime": "node",
   "sentry": {
     "org": "bbdw-workshop-jj",
@@ -11,5 +11,16 @@
     "src/orders.ts"
   ],
   "testPattern": "^test/patchwork-[a-z0-9-]+\\.test\\.ts$",
-  "scenario": "CHK-001"
+  "scenario": "CHK-003",
+  "handoff": {
+    "targets": [
+      {
+        "repository": "bb-dw-26/bbdw-storefront",
+        "baseBranch": "demo/chk-003",
+        "service": "bbdw-storefront",
+        "description": "Interface e estado local da compra"
+      }
+    ],
+    "sources": []
+  }
 }

@@ -33,13 +33,18 @@ export function initTelemetry() {
   });
 }
 
-export function captureServerError(error: unknown, requestId: string) {
+export function captureServerError(
+  error: unknown,
+  requestId: string,
+  tags: Record<string, string> = {},
+) {
   if (!Sentry.isEnabled()) return;
   Sentry.withScope((scope) => {
     scope.setTag("service", "bbdw-checkout");
     scope.setTag("scenario", process.env.DEMO_SCENARIO || "none");
     scope.setTag("request_id", requestId);
     scope.setTag("demo_run", process.env.DEMO_RUN_ID || "local");
+    scope.setTags(tags);
     Sentry.captureException(error);
   });
 }

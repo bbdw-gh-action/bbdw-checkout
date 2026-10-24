@@ -13,5 +13,7 @@
 ## Patchwork, skills e Sentry
 
 - Em uma execução do Patchwork, leia e use `.agents/skills/service-regression/SKILL.md` e `.agents/skills/patchwork-investigation/SKILL.md`, disponibilizada pelo workflow.
-- Consulte o MCP `sentry` para o incidente, evento e release recebidos. O servidor é limitado ao projeto deste repositório e a ferramentas de leitura.
+- Consulte o MCP `sentry` para o incidente, evento e release recebidos. O servidor é limitado ao projeto Sentry de origem validado pelo workflow e a ferramentas de leitura.
 - O escopo de arquivos, o padrão de testes e a branch autorizada estão em `.github/patchwork.json`.
+
+- Se a investigação encontrar evidências de responsabilidade de outro repositório, consulte `.agents/skills/patchwork-handoff/SKILL.md`, quando disponibilizada pelo workflow. Não é uma triagem prévia obrigatória. Somente a saída de encaminhamento dispensa patch e teste novo na origem.

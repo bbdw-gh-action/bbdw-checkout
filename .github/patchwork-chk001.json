@@ -1,0 +1,15 @@
+{
+  "repository": "bb-dw-26/bbdw-checkout",
+  "baseBranch": "demo/chk-001",
+  "runtime": "node",
+  "sentry": {
+    "org": "bbdw-workshop-jj",
+    "project": "bbdw-checkout",
+    "projectId": "4512294853869568"
+  },
+  "sourceFiles": [
+    "src/orders.ts"
+  ],
+  "testPattern": "^test/patchwork-[a-z0-9-]+\\.test\\.ts$",
+  "scenario": "CHK-001"
+}

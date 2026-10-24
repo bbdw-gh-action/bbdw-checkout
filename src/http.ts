@@ -59,7 +59,12 @@ export function configureHttp(app: INestApplication) {
   });
   app.enableCors({
     origin: process.env.CORS_ORIGIN ?? "http://localhost:3000",
-    allowedHeaders: ["Content-Type", "X-Request-ID"],
+    allowedHeaders: [
+      "Content-Type",
+      "X-Request-ID",
+      "Idempotency-Key",
+      "X-Client-Release",
+    ],
     exposedHeaders: ["X-Request-ID"],
   });
   app.useGlobalFilters(new ApiExceptionFilter());

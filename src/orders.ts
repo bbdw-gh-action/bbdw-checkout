@@ -1,6 +1,7 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { randomUUID } from "node:crypto";
 import { ApiError } from "./http";
+import { IdempotencyStore } from "./idempotency";
 
 type Address = { postalCode: string; street: string; city: string };
 type Customer = { id: string; address: Address | null };
@@ -143,11 +144,31 @@ export class Dependencies {
 
 @Injectable()
 export class OrdersService {
+  private readonly attempts = new IdempotencyStore<
+    Awaited<ReturnType<OrdersService["perform"]>>
+  >();
   constructor(
     @Inject(Dependencies) private readonly dependencies: Dependencies,
   ) {}
-  async create(raw: unknown, requestId: string) {
+  async create(
+    raw: unknown,
+    requestId: string,
+    key?: string,
+    clientRelease?: string,
+  ) {
     const input = validate(raw);
+    const fingerprint = JSON.stringify({
+      customerId: input.customerId,
+      fulfillment: input.fulfillment,
+      items: input.items
+        .map(({ productId, quantity }) => ({ productId, quantity }))
+        .sort((a, b) => a.productId.localeCompare(b.productId)),
+    });
+    return this.attempts.run(key, fingerprint, requestId, clientRelease, () =>
+      this.perform(input, requestId),
+    );
+  }
+  private async perform(input: OrderInput, requestId: string) {
     const customer = await this.dependencies.customer(
       input.customerId,
       requestId,
